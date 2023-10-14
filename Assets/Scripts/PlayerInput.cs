@@ -8,7 +8,7 @@ public class PlayerInput : MonoBehaviour
     private Vector2 _deltaInput;
     private Vector2 _lastTouchPosition;
 
-    private bool _touched;
+    public bool Touched { get; private set; } = false;
 
     public float XInput => _deltaInput.x * 0.01f * _sensitivityX;
     public float YInput => _deltaInput.y * 0.01f * _sensitivityY;
@@ -19,10 +19,10 @@ public class PlayerInput : MonoBehaviour
         {
             var currentTouch = Input.mousePosition;
 
-            if (!_touched)
+            if (!Touched)
             {
                 _lastTouchPosition = currentTouch;
-                _touched = true;
+                Touched = true;
             }
 
             _deltaInput = (Vector2)currentTouch - _lastTouchPosition;
@@ -32,7 +32,7 @@ public class PlayerInput : MonoBehaviour
         else
         {
             _deltaInput = Vector2.zero;
-            _touched = false;
+            Touched = false;
         }
     }
 }

@@ -13,6 +13,8 @@ public class CannonTrajectory : MonoBehaviour
 
     public void SetLength(float value)
     {
+        _lineRenderer.enabled = value != 0;
+
         var target = _lineRenderer.GetPosition(1);
         target.z = Mathf.Lerp(0, _maxZPosition, value);
         

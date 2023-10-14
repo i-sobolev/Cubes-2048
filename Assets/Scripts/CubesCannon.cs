@@ -1,26 +1,65 @@
+using System.Collections;
 using UnityEngine;
 
 public class CubesCannon : MonoBehaviour
 {
+    [SerializeField] private Cube _cubeTemplate;
+    [Space]
     [SerializeField] private PlayerInput _playerInput;
-    [SerializeField] private Transform _testCube;
     [SerializeField] private CannonTrajectory _shootTrajectory;
     [Space]
     [SerializeField] private float _xMaxPosition;
+    [Space]
     [SerializeField] private float _maxShootForce;
+    [SerializeField] private float _minShootForce;
 
-    private Vector3 _cubeTargetPosition = Vector3.zero;
+    private Cube _currentCube;
+    private Vector3 _cubeTargetPosition;
     private float _shootForce = 1;
 
-    private void Update()
+    private void Start()
     {
-        _testCube.localPosition = Vector3.Lerp(_testCube.localPosition, _cubeTargetPosition, 0.15f);
+        StartCoroutine(ShootingProcess());
+    }
+
+    private IEnumerator ShootingProcess()
+    {
+        while (true)
+        {
+            _cubeTargetPosition = transform.position;
+            _shootForce = (_minShootForce + _maxShootForce) / 0.5f;
+
+            _currentCube = Instantiate(_cubeTemplate, transform.position, Quaternion.identity);
+
+            HandlePlayerInput();
+
+            yield return new WaitUntil(() => _playerInput.Touched);
+
+            while (_playerInput.Touched || _shootForce < _minShootForce)
+            {
+                HandlePlayerInput();
+
+                yield return null;
+            }
+
+            _shootTrajectory.SetLength(0);
+            _currentCube.Throw(Vector3.forward * _shootForce);
+
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    private void HandlePlayerInput()
+    {
+        _currentCube.transform.position = Vector3.Lerp(_currentCube.transform.position, _cubeTargetPosition, 0.15f);
 
         _cubeTargetPosition += Vector3.right * _playerInput.XInput;
         _cubeTargetPosition.x = Mathf.Clamp(_cubeTargetPosition.x, -_xMaxPosition, _xMaxPosition);
 
         _shootForce = Mathf.Clamp(_shootForce + _playerInput.YInput, 0, _maxShootForce);
-        _shootTrajectory.SetLength(Mathf.InverseLerp(0, _maxShootForce, _shootForce));
+
+        _shootTrajectory.SetLength(_shootForce > _minShootForce ? Mathf.InverseLerp(0, _maxShootForce, _shootForce) : 0);
+        _shootTrajectory.transform.position = _currentCube.transform.position;
     }
 
 #if UNITY_EDITOR
