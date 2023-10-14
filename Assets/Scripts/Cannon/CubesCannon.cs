@@ -3,8 +3,7 @@ using UnityEngine;
 
 public class CubesCannon : MonoBehaviour
 {
-    [SerializeField] private Cube _cubeTemplate;
-    [Space]
+    [SerializeField] private CubesCreator _cubesManager;
     [SerializeField] private PlayerInput _playerInput;
     [SerializeField] private CannonTrajectory _shootTrajectory;
     [Space]
@@ -29,7 +28,8 @@ public class CubesCannon : MonoBehaviour
             _cubeTargetPosition = transform.position;
             _shootForce = (_minShootForce + _maxShootForce) / 0.5f;
 
-            _currentCube = Instantiate(_cubeTemplate, transform.position, Quaternion.identity);
+            _currentCube = _cubesManager.GetCube();
+            _currentCube.transform.position = _cubeTargetPosition;
 
             HandlePlayerInput();
 
