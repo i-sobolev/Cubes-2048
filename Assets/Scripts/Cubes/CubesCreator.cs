@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 
 public class CubesCreator : MonoBehaviour
 {
-    public event Action<int> CubesMerged;
+    public event Action<Cube> CubesMerged;
 
     [SerializeField] private Cube _cubeTemplate;
     [Space]
@@ -62,6 +62,6 @@ public class CubesCreator : MonoBehaviour
 
         newCube.transform.DOScale(newCube.transform.localScale.x, 0.25f).From(0).SetEase(Ease.OutBack);
 
-        CubesMerged?.Invoke((int)Mathf.Pow(2, newCubeLevel));
+        CubesMerged?.Invoke(newCube);
     }
 }
