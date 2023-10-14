@@ -1,10 +1,14 @@
 using DG.Tweening;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class CubesCreator : MonoBehaviour
 {
+    public event Action<int> CubesMerged;
+
     [SerializeField] private Cube _cubeTemplate;
     [Space]
     [SerializeField] private Color[] _cubeColorsByLevels;
@@ -13,13 +17,19 @@ public class CubesCreator : MonoBehaviour
 
     public Cube GetCube()
     {
-        var newCube = _createdCubes.FirstOrDefault(x => !x.gameObject.activeInHierarchy) ?? Instantiate(_cubeTemplate, Vector3.zero, Quaternion.identity);
+        var newCube = _createdCubes.FirstOrDefault(x => !x.gameObject.activeInHierarchy);
+
+        if (newCube == null)
+        {
+            newCube = Instantiate(_cubeTemplate, Vector3.zero, Quaternion.identity);
+
+            newCube.CollidedWithCube += MergeCubes;
+            _createdCubes.Add(newCube);
+        }
 
         var newCubeLevel = GetRandomCubeLevel();
         newCube.Set(newCubeLevel, _cubeColorsByLevels[newCubeLevel - 1]);
         newCube.gameObject.SetActive(true);
-
-        newCube.CollidedWithCube += MergeCubes;
 
         return newCube;
 
@@ -44,12 +54,14 @@ public class CubesCreator : MonoBehaviour
         var newCubeTargetPosition = (args.Cube1.transform.position + args.Cube2.transform.position) / 2;
 
         var newCube = GetCube();
-        var newCubeLevel = args.Cube1.Level + 1;
+        var newCubeLevel = args.Level + 1;
         
         newCube.Set(newCubeLevel, _cubeColorsByLevels[newCubeLevel - 1]);
         newCube.transform.position = newCubeTargetPosition;
         newCube.Throw(Vector3.up * 5, true);
 
         newCube.transform.DOScale(newCube.transform.localScale.x, 0.25f).From(0).SetEase(Ease.OutBack);
+
+        CubesMerged?.Invoke((int)Mathf.Pow(2, newCubeLevel));
     }
 }

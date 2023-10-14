@@ -27,7 +27,7 @@ public class CubesCannon : MonoBehaviour
         while (true)
         {
             _cubeTargetPosition = transform.position;
-            _shootForce = (_minShootForce + _maxShootForce) / 0.5f;
+            _shootForce = (_minShootForce + _maxShootForce) / 2;
 
             _currentCube = _cubesCreator.GetCube();
             _currentCube.transform.position = _cubeTargetPosition;
