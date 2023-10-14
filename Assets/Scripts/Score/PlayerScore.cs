@@ -7,8 +7,9 @@ public class PlayerScore : MonoBehaviour
     public event Action<int> HighScoreUpdated;
 
     [SerializeField] private CubesCreator _cubesCreator;
+    [SerializeField] private ScorePointsParticles _scorePointsParticles;
 
-    private int _currentScore = 0;
+    public int CurrentScore { get; private set; } = 0;
 
     private const string _prefsKeyHighScore = "high_score";
     public int HighScore
@@ -29,16 +30,20 @@ public class PlayerScore : MonoBehaviour
         _cubesCreator.CubesMerged += OnCubesMerged;
     }
 
-    private void OnCubesMerged(int score)
+    private void OnCubesMerged(Cube cube)
     {
-        _currentScore += score;
+        var points = (int)Mathf.Pow(2, cube.Level);
+        CurrentScore += points;
 
-        CurrentScoreUpdated?.Invoke(_currentScore);
+        CurrentScoreUpdated?.Invoke(CurrentScore);
 
-        if (_currentScore > HighScore)
+        if (CurrentScore > HighScore)
         {
-            HighScore = _currentScore;
+            HighScore = CurrentScore;
             HighScoreUpdated?.Invoke(HighScore);
         }
+
+        var scoreParticles = Instantiate(_scorePointsParticles, cube.transform.position, Quaternion.identity);
+        scoreParticles.Play(points);
     }
 }
