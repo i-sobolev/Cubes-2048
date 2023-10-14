@@ -14,13 +14,25 @@ public class CubesCreator : MonoBehaviour
     {
         var newCube = _createdCubes.FirstOrDefault(x => !x.gameObject.activeInHierarchy) ?? Instantiate(_cubeTemplate, Vector3.zero, Quaternion.identity);
 
-        var newCubeLevel = 1;
+        var newCubeLevel = GetRandomCubeLevel();
         newCube.Set(newCubeLevel, _cubeColorsByLevels[newCubeLevel - 1]);
         newCube.gameObject.SetActive(true);
 
         newCube.CollidedWithCube += MergeCubes;
 
         return newCube;
+
+        int GetRandomCubeLevel()
+        {
+            var randomValue = Random.Range(0, 100f);
+
+            return randomValue switch
+            {
+                < 5 => 3,
+                < 15 => 2,
+                _ => 1,
+            };
+        }
     }
 
     private void MergeCubes(Cube.CubesCollisionEventArgs args)
