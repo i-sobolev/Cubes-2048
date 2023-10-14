@@ -7,9 +7,11 @@ public class Cube : MonoBehaviour
     public event Action<CubesCollisionEventArgs> CollidedWithCube;
 
     [SerializeField] private MeshRenderer _meshRenderer;
+    [SerializeField] private Collider _collider;
     [SerializeField] private TextMeshPro[] numbers;
 
     public int Level { get; private set; }
+    public bool Thrown { get; private set; } = false;
 
     private Rigidbody _rigidbody;
     private Vector3 _baseScale;
@@ -40,8 +42,11 @@ public class Cube : MonoBehaviour
 
         _rigidbody.velocity = Vector3.zero;
         _rigidbody.isKinematic = true;
+        _collider.enabled = false;
 
         Level = level;
+
+        Thrown = false;
 
         foreach (var text in numbers)
             text.text = Mathf.Pow(2, level).ToString();
@@ -51,6 +56,10 @@ public class Cube : MonoBehaviour
 
     public void Throw(Vector3 direction, bool addTorque = false)
     {
+        Thrown = true;
+
+        _collider.enabled = true;
+        
         _rigidbody.isKinematic = false;
         _rigidbody.AddForce(direction, ForceMode.Impulse);
 
