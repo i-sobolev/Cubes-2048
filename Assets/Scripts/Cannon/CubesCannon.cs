@@ -1,9 +1,10 @@
+using DG.Tweening;
 using System.Collections;
 using UnityEngine;
 
 public class CubesCannon : MonoBehaviour
 {
-    [SerializeField] private CubesCreator _cubesManager;
+    [SerializeField] private CubesCreator _cubesCreator;
     [SerializeField] private PlayerInput _playerInput;
     [SerializeField] private CannonTrajectory _shootTrajectory;
     [Space]
@@ -28,8 +29,10 @@ public class CubesCannon : MonoBehaviour
             _cubeTargetPosition = transform.position;
             _shootForce = (_minShootForce + _maxShootForce) / 0.5f;
 
-            _currentCube = _cubesManager.GetCube();
+            _currentCube = _cubesCreator.GetCube();
             _currentCube.transform.position = _cubeTargetPosition;
+
+            _currentCube.transform.DOScale(_currentCube.transform.localScale.x, 0.25f).From(0).SetEase(Ease.OutBack);
 
             HandlePlayerInput();
 

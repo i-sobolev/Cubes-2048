@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -47,6 +48,8 @@ public class CubesCreator : MonoBehaviour
         
         newCube.Set(newCubeLevel, _cubeColorsByLevels[newCubeLevel - 1]);
         newCube.transform.position = newCubeTargetPosition;
-        newCube.Throw(Vector3.up * 5);
+        newCube.Throw(Vector3.up * 5, true);
+
+        newCube.transform.DOScale(newCube.transform.localScale.x, 0.25f).From(0).SetEase(Ease.OutBack);
     }
 }

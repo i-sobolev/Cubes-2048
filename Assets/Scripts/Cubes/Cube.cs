@@ -32,12 +32,15 @@ public class Cube : MonoBehaviour
         _meshRenderer.material.color = color;
     }
 
-    public void Throw(Vector3 direction)
+    public void Throw(Vector3 direction, bool addTorque = false)
     {
         var rigidBody = GetComponent<Rigidbody>();
 
         rigidBody.isKinematic = false;
         rigidBody.AddForce(direction, ForceMode.Impulse);
+
+        if (addTorque)
+            rigidBody.AddTorque(UnityEngine.Random.onUnitSphere * 50);
     }
 
     public class CubesCollisionEventArgs
