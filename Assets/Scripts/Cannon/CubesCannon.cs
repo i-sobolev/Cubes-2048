@@ -55,7 +55,7 @@ public class CubesCannon : MonoBehaviour
 
     private void HandlePlayerInput()
     {
-        _currentCube.transform.position = Vector3.Lerp(_currentCube.transform.position, _cubeTargetPosition, 0.15f);
+        _currentCube.transform.position = Vector3.Lerp(_currentCube.transform.position, _cubeTargetPosition, 0.75f);
 
         _cubeTargetPosition += Vector3.right * _playerInput.XInput;
         _cubeTargetPosition.x = Mathf.Clamp(_cubeTargetPosition.x, -_xMaxPosition, _xMaxPosition);
